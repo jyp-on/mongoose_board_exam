@@ -1,0 +1,7 @@
+npm install express
+npm install nodemon
+npm install body-parser
+npm install ejs
+npm install method-override
+npm install dot-env //환경변수 숨길수있음.
+npm install mongoose
