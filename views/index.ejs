@@ -11,18 +11,32 @@
     integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
   <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <title>Hello, world!</title>
+  <style>
+    .board_top{
+      font-size:large;
+    }
+    .boards_top_right{
+      float:right;
+    }
+  </style>
 </head>
 
 <body>
   <%- include('nav.html') %>
-    <div class="container">
+    <div class="container mt-3">
       <ul class="list-group">
         <% if (board !== null) { for(var i=0; i<board.length; i++){ %>
-          <li class="list-group-item">
-            <h4>제목 : <%= board[i].title %></h4>
-            <button class="btn btn-danger delete" data-id="<%= posts[i]._id %>">삭제</button>
-            <button class="btn btn-success edit" data-id="<%= posts[i]._id %>">수정</button>
-            <button class="btn btn-warning detail" data-id="<%= posts[i]._id %>">상세보기</button>
+          <li class="list-group-item">   
+            <div class="board_top">
+              <div>제목 : <%= board[i].title %> <span class="boards_top_right ">작성시간 : <%= board[i].board_date %></span></div>
+              <div>작성자 : <%= board[i].author %></div>
+              
+            </div>
+            <div class="btn-box mt-4">
+              <button class="btn btn-danger delete" data-id="<%= board[i]._id %>">삭제</button>
+              <button class="btn btn-success edit" data-id="<%= board[i]._id %>">수정</button>
+              <button class="btn btn-warning detail" data-id="<%= board[i]._id %>">상세보기</button>
+            </div>
           </li>
           <% }} %>
       </ul>

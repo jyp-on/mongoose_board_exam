@@ -1,12 +1,14 @@
-const express = 요청uire("express");
+const express = require("express");
 const router = express.Router();
 
-const Board = 요청uire("../models/board");
-const Comment = 요청uire("../models/comment")
+const Board = require("../models/board");
+const Comment = require("../models/comment")
 
+
+/* index -> 게시판 보여주는 곳 */
 router.get('/', function(요청, 응답){
   Board.find({}, function(에러, 결과){
-    응답.render('index', {title: "Express", board:결과})
+    응답.render('index', {board:결과})
   })
 })
 
@@ -17,7 +19,7 @@ router.get('/write', function(요청, 응답) {
 
 /* board insert mongo */
 router.post('/board/write', function (요청, 응답) {
-var board = new Board();
+let board = new Board();
 board.title = 요청.body.title;
 board.contents = 요청.body.contents;
 board.author = 요청.body.author;
@@ -29,6 +31,7 @@ board.save(function (err) {
   }
   응답.redirect('/');
 });
+console.log(board)
 });
 
 /* board find by id */
