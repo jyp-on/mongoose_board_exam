@@ -12,11 +12,12 @@
   <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <title>Hello, world!</title>
   <style>
-    .board_top{
-      font-size:large;
+    .board_top {
+      font-size: large;
     }
-    .boards_top_right{
-      float:right;
+
+    .boards_top_right {
+      float: right;
     }
   </style>
 </head>
@@ -25,16 +26,17 @@
   <%- include('nav.html') %>
     <div class="container mt-3">
       <ul class="list-group">
-        <% if (board !== null) { for(var i=0; i<board.length; i++){ %>
-          <li class="list-group-item">   
+        <% if (board !==null) { for(var i=0; i<board.length; i++){ %>
+          <li class="list-group-item">
             <div class="board_top">
-              <div>제목 : <%= board[i].title %> <span class="boards_top_right ">작성시간 : <%= board[i].board_date %></span></div>
-              <div>작성자 : <%= board[i].author %></div>
-              
+              <div>제목 : <%= board[i].title %> <span class="boards_top_right "><%= board[i].board_date %></span>
+              </div>
+              <div>작성자 : <%= board[i].author %>
+              </div>
+
             </div>
             <div class="btn-box mt-4">
-              <button class="btn btn-danger delete" data-id="<%= board[i]._id %>">삭제</button>
-              <button class="btn btn-success edit" data-id="<%= board[i]._id %>">수정</button>
+              
               <button class="btn btn-warning detail" data-id="<%= board[i]._id %>">상세보기</button>
             </div>
           </li>
@@ -47,6 +49,27 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
       crossorigin="anonymous"></script>
+    <script>
+      // $('#search').click(function () {
+      //   let 입력한값 = $('#search-input').val()
+      //   window.location.replace(`/search?value=${입력한값}`)
+      // })
+
+
+      $('.detail').click(function (e) {
+        let 글번호 = e.target.dataset.id;
+
+        $.ajax({
+          method: 'get',
+          url: '/detail/' + 글번호
+        }).done(function (결과) {
+          location.href = '/detail/' + 글번호;
+        }).fail(function (a, b, c) {
+
+        });
+
+      })
+    </script>
 </body>
 
 </html>
