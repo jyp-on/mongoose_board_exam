@@ -14,7 +14,7 @@ router.get('/', function(요청, 응답){
 
 /* Write board page */
 router.get('/write', function(요청, 응답) {
-  응답.render('write', { title: '글쓰기' });
+  응답.render('write');
 });
 
 /* board insert mongo */
@@ -31,13 +31,13 @@ board.save(function (err) {
   }
   응답.redirect('/');
 });
-console.log(board)
 });
 
 /* board find by id */
-router.get('/board/:id', function (요청, 응답) {
+router.get('/detail/:id', function (요청, 응답) {
   Board.findOne({_id: 요청.params.id}, function (err, board) {
-      응답.render('board', { title: 'Board', board: board });
+      if(err){console.log(err)}
+      응답.render('detail', { board: board });
   })
 });
 

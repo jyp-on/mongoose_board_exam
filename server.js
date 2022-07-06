@@ -2,8 +2,10 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const Router = require('./router/index')
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({extended:true}))
 app.set('view engine', 'ejs');
-app.use(express.json(), Router);
+app.use(Router);
 
 mongoose.connect(
   'mongodb+srv://okmlnsunok:jyp1234@cluster0.i8mgpkg.mongodb.net/?retryWrites=true&w=majority',
