@@ -46,11 +46,11 @@ router.delete('/board/delete',  function(요청, 응답){
 router.get('/board/edit/:id', function(요청, 응답){
   Board.findOne({_id:요청.params.id}, function(에러, 결과){
     if(에러){console.log(에러)}
-    응답.render("edit", 결과);
+    응답.render("edit", {board:결과});
   })
 })
 
-router.put('/board/edit', function(요청, 읃답){
+router.put('/board/edit', function(요청, 응답){
   const contents = 요청.body.contents
   const title = 요청.body.title
   Board.findOneAndUpdate({_id:요청.body.id}, 
@@ -62,7 +62,9 @@ router.put('/board/edit', function(요청, 읃답){
         console.log(에러);
         응답.redirect('/');
       }
+      응답.redirect('/');
     })
+    
 })
 
 /* board find by id */
@@ -75,15 +77,18 @@ router.get('/detail/:id', function (요청, 응답) {
 
 /* comment insert mongo*/
 router.post('/comment/write', function (요청, 응답){
+  const date = new Date();
+  const dateformat = date.toLocaleString();
+
   let comment = new Comment();
   comment.contents = 요청.body.contents;
   comment.author = 요청.body.author;
-  console.log(comment)
+  comment.comment_date = dateformat;
   Board.findOneAndUpdate({_id : 요청.body.id}, 
     { $push: { comments : comment}}, function (에러, 결과) {
       if(에러){
           console.log(에러);
-          응답.redirect('/');
+          응답.redirect('/detail/'+요청.body.id);
       }
       응답.redirect('/detail/'+요청.body.id);
   });

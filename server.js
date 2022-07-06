@@ -3,6 +3,8 @@ const app = express();
 const mongoose = require('mongoose');
 const Router = require('./router/index')
 const bodyParser = require('body-parser');
+const methodOverride = require('method-override');
+app.use(methodOverride('_method'));
 app.use(bodyParser.urlencoded({extended:true}))
 app.set('view engine', 'ejs');
 app.use(Router);

@@ -11,6 +11,6 @@ const commentSchema = new Schema({
         type : String,
         required : true
     },
-    comment_date: {type: String, default: dateformat}
+    comment_date: {type: String, required: true}
 })
 module.exports = mongoose.model('comment', commentSchema);
