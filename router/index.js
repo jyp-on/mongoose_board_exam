@@ -3,6 +3,86 @@ const router = express.Router();
 
 const Board = require("../models/board");
 const Comment = require("../models/comment")
+const User = require("../models/user");
+
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const session = require('express-session');
+
+router.use(session({secret : '비밀코드', resave : true, saveUninitialized: false}));
+router.use(passport.initialize());
+router.use(passport.session());
+
+/*회원가입 */
+router.post("/register", (요청, 응답)=>{
+  User.findOne({email:요청.body.email}).then((user)=>{
+    if(user){ //이미 있는 유저면
+      return 응답.status(400).json({email : "이미 가입한 유저입니다."})
+    } else{
+      const newUser = new User({
+        userName: 요청.body.userName,
+        email: 요청.body.email,
+        password: 요청.body.password,
+      });
+      newUser.save(function(에러){
+        if(에러) {console.log(에러)}
+        응답.redirect('/');
+      })
+      // return 응답.status(200).json({msg: newUser})
+    }
+  })
+})
+
+/*로그인 */
+router.post('/login', passport.authenticate('local', {
+  failureRedirect : '/fail'
+}),function(요청, 응답){
+  console.log(요청.body);
+  응답.redirect('/')
+});
+
+router.get('/fail', function(요청, 응답){
+  응답.send('로그인 실패..')
+})
+
+passport.use(new LocalStrategy({ //인증하는 방법
+  usernameField: 'email', //input의 name이 뭔지.
+  passwordField: 'pw',
+  session: true,
+  passReqToCallback: false, //true로 바꾸면 fucntion에 req를 넣어서 아디, 비번 외에 정보를 받기 가능
+}, function (입력한이메일, 입력한비번, done) {
+  User.findOne({ email: 입력한이메일 }, function (에러, 결과) {
+    if (에러) return done(에러)
+
+    //일치하는 id가 없으면
+    if (!결과) return done(null, false, { message: '존재하지않는 아이디요' })
+    //일치하는 아디가 있고 패스워드도 같으면
+    if (입력한비번 == 결과.password) {
+      return done(null, 결과) //결과를 담아서 serializeUser로 넘김
+    } else {
+      return done(null, false, { message: '비번틀렸어요' })
+    }
+  })
+}));
+
+passport.serializeUser(function(user, done){
+  done(null, user.id); //id를 이용해서 세션을 저장시키는 코드
+});
+
+passport.deserializeUser(function(아이디, done){
+  User.findOne({email:아이디}, function(에러, 결과){
+    done(null, 결과)
+  })
+})
+
+/*로그인 여부 체크하는 미들웨어 함수*/
+function 로그인여부(요청, 응답, next){
+  if(요청.user){ 
+    next()
+  } else{
+    응답.redirect('/login')
+  }
+}
 
 
 /* index -> 게시판 보여주는 곳 */

@@ -5,3 +5,5 @@ npm install ejs
 npm install method-override
 npm install dot-env //환경변수 숨길수있음.
 npm install mongoose
+npm install express-session //쿠키를 사용하여 세션ID를 저장
+npm install passport-local-mongoose --save //인증된 미들웨어
