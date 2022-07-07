@@ -1,9 +1,10 @@
-npm install express
-npm install nodemon
-npm install body-parser
-npm install ejs
-npm install method-override
+npm install express //express 라이브러리 사용하기 위함
+npm install nodemon //저장시 서버 재시작
+npm install body-parser //body로 넘어오는 데이터 받기위함
+npm install ejs //ejs 를 view로 사용할 수 있게함.
+npm install method-override //원래 form은 get, post만 사용가능한데 put delete도 사용하게함
 npm install dot-env //환경변수 숨길수있음.
-npm install mongoose
+npm install mongoose //Mongoose는 Node.js와 MongoDB를 위한 ODM(Object Data Mapping) 라이브러리
 npm install express-session //쿠키를 사용하여 세션ID를 저장
 npm install passport-local-mongoose --save //인증된 미들웨어
+npm install passport //인증처리를 해주는 미들웨어
