@@ -15,6 +15,7 @@
     .btn {
       float: right;
       margin-right: 5px;
+      white-space: nowrap;
     }
 
     .board-title {
@@ -23,11 +24,20 @@
       width: 200px;
     }
 
-    .board-author {}
+    .c_date {
+      white-space: nowrap;
+      width: 200px;
+
+    }
+
+    td {
+      padding-bottom: 10px;
+    }
 
     .board-date {
       float: right;
       width: 200px;
+      z-index: 0;
     }
   </style>
 </head>
@@ -54,22 +64,24 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td colspan="3">
+          <tr class="">
+            <td colspan="4">
               <%=board.contents%>
             </td>
           </tr>
-          <tr>
-            <td colspan="3" class="btn-section">
-              <button class="btn btn-danger delete" data-id="<%= board._id %>">삭제</button>
-              <button class="btn btn-success edit" data-id="<%= board._id %>">수정</button>
-            </td>
-          </tr>
+          <% if(currentUser.userName==board.author) {%>
+            <tr>
+              <td colspan="4" class="btn-section">
+                <button class="btn btn-danger delete" data-id="<%= board._id %>">삭제</button>
+                <button class="btn btn-success edit" data-id="<%= board._id %>">수정</button>
+              </td>
+            </tr>
+            <%}%>
         </tbody>
         <tfoot>
           <input type="hidden" id="id" value="<%=board._id%>">
           <input type="hidden" id="author" value="<%=board.author%>">
-          <td colspan="3">
+          <td colspan="4">
             <div class="form-floating mb-2">
               <textarea class="form-control" placeholder="Leave a comment here" id="contents"
                 name="contents"></textarea>
@@ -82,12 +94,27 @@
               <tr>
                 <td>작성자 : <%=board.comments[i].author%>
                 </td>
+                <td class="c_date">
+                  <%=board.comments[i].comment_date %>
+                </td>
+              <tr>
                 <td>
                   <%=board.comments[i].contents %>
                 </td>
-                <td>
-                  <%=board.comments[i].comment_date %>
-                </td>
+                <% if(board.comments[i].author==currentUser.userName) { %>
+                  <td>
+                    <button type="submit" class="btn btn-warning delete_comments"
+                      data-id="<%= board.comments[i]._id %>">삭제</button>
+                  </td>
+
+
+                  <% }else{ %>
+                    <td></td>
+                    <%}%>
+              </tr>
+
+
+
               </tr>
               <% }} %>
         </tfoot>
@@ -141,9 +168,27 @@
             contents: contents
           }
         }).done(function (결과) {
-          location.href="/detail/"+board_id;
+          location.href = "/detail/" + board_id;
         }).fail(function (a, b, c) {
-          location.href="/detail/"+board_id;
+          location.href = "/detail/" + board_id;
+        });
+      })
+
+      $('.delete_comments').click(function (e) {
+        let board_id = $('#id').val();
+        let comment_index = e.target.dataset.id;
+
+        $.ajax({
+          method: 'DELETE',
+          url: '/comment/delete',
+          data: {
+            id: board_id,
+            c_index: comment_index,
+          }
+        }).done(function (결과) {
+          location.href = "/detail/" + board_id;
+        }).fail(function (a, b, c) {
+          location.href = "/detail/" + board_id;
         });
       })
     </script>

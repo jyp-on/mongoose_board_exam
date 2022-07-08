@@ -27,7 +27,7 @@ router.get('/register', (요청, 응답)=>{
 })
 
 router.post("/register", (요청, 응답)=>{
-  User.findOne({email:요청.body.userName}).then((user)=>{
+  User.findOne({userName:요청.body.userName}).then((user)=>{
     if(user){ //이미 있는 유저면
       return 응답.status(400).json({userName : "이미 가입한 유저입니다."})
     } else{
@@ -84,7 +84,7 @@ passport.serializeUser(function(user, done){
 });
 
 passport.deserializeUser(function(아이디, done){
-  User.findOne({email:아이디}, function(에러, 결과){
+  User.findOne({userName:아이디}, function(에러, 결과){
     done(null, 결과)
   })
 })
@@ -165,9 +165,9 @@ router.put('/board/edit',로그인여부, function(요청, 응답){
     }}, function(에러, 결과){
       if(에러){
         console.log(에러);
-        응답.redirect('/');
+        응답.redirect('/detail/'+요청.body.id);
       }
-      응답.redirect('/');
+      응답.redirect('/detail/'+요청.body.id);
     })
 })
 
@@ -186,7 +186,7 @@ router.post('/comment/write',로그인여부, function (요청, 응답){
 
   let comment = new Comment();
   comment.contents = 요청.body.contents;
-  comment.author = 요청.body.author;
+  comment.author = 요청.user.userName;
   comment.comment_date = dateformat;
   Board.findOneAndUpdate({_id : 요청.body.id}, 
     { $push: { comments : comment}}, function (에러, 결과) {
@@ -197,5 +197,15 @@ router.post('/comment/write',로그인여부, function (요청, 응답){
       응답.redirect('/detail/'+요청.body.id);
   });
 });
+
+/* comment delete mongo*/
+router.delete('/comment/delete',로그인여부, function (요청, 응답){
+  let c_id = 요청.body.c_index;
+  Board.findOneAndUpdate({_id:요청.body.id},
+    { $pull: {comments:{_id:c_id}}}).exec()
+  
+  응답.redirect('/detail/'+요청.body.id)
+});
+
 
 module.exports = router
