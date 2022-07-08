@@ -8,3 +8,4 @@ npm install mongoose //Mongoose는 Node.js와 MongoDB를 위한 ODM(Object Data 
 npm install express-session //쿠키를 사용하여 세션ID를 저장
 npm install passport-local-mongoose --save //인증된 미들웨어
 npm install passport //인증처리를 해주는 미들웨어
+npm install --save bcryptjs

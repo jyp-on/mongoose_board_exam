@@ -8,6 +8,7 @@ const User = require("../models/user");
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
+const bcrypt = require('bcryptjs');
 
 router.use(session({secret : '비밀코드', resave : true, saveUninitialized: false}));
 router.use(passport.initialize());
@@ -23,13 +24,13 @@ router.use(function(req,res,next){
 
 /*회원가입 */
 router.get('/register', (요청, 응답)=>{
-  응답.render('register');
+  응답.render('register', {msg:'기본'});
 })
 
 router.post("/register", (요청, 응답)=>{
   User.findOne({userName:요청.body.userName}).then((user)=>{
     if(user){ //이미 있는 유저면
-      return 응답.status(400).json({userName : "이미 가입한 유저입니다."})
+      응답.render('register',{msg:'사용중인 닉네임 입니다.'});
     } else{
       const newUser = new User({
         userName: 요청.body.userName,
@@ -42,6 +43,21 @@ router.post("/register", (요청, 응답)=>{
       // return 응답.status(200).json({msg: newUser})
     }
   })
+})
+
+
+router.post('/check', (요청, 응답)=>{
+  const name = 요청.body.name;
+  let msg;
+  User.findOne({userName:name}).then((user)=>{
+    if(user){//유저가 있으면
+      msg = 1 //
+    }
+    else {msg = 2} //사용가능한 닉네임일때
+    응답.send({msg:msg})
+  })
+  
+  
 })
 
 /*로그인 */
@@ -65,13 +81,15 @@ passport.use(new LocalStrategy({ //인증하는 방법
   session: true,
   passReqToCallback: false, //true로 바꾸면 fucntion에 req를 넣어서 아디, 비번 외에 정보를 받기 가능
 }, function (입력한이름, 입력한비번, done) {
+  
   User.findOne({ userName: 입력한이름 }, function (에러, 결과) {
     if (에러) return done(에러)
 
     //일치하는 id가 없으면
     if (!결과) return done(null, false, { msg: '존재하지않는 아이디입니다.' })
     //일치하는 아디가 있고 패스워드도 같으면
-    if (입력한비번 == 결과.password) {
+    const validPassword = bcrypt.compare(입력한비번, 결과.password)
+    if (validPassword) {
       return done(null, 결과) //결과를 담아서 serializeUser로 넘김
     } else {
       return done(null, false, { msg: '비번틀렸어요' })
@@ -105,6 +123,8 @@ router.get('/logout', function(요청, 응답, next) {
     응답.redirect('/');
   })
 });
+
+
 
 /**ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
 /**ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ로그인 회원가입 끝 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ*/
