@@ -132,9 +132,45 @@ router.get('/logout', function(요청, 응답, next) {
 
 /* index -> 게시판 보여주는 곳 */
 router.get('/', function(요청, 응답){
-  Board.find({}, function(에러, 결과){
-    응답.render('index', {board:결과})
+  const page = Number(요청.query.page || 1);
+  const perPage = Number(5);
+  let total;
+  let totalPage;
+  Board.count({}, function(err, count){
+    total = count
+    totalPage = Number(Math.ceil(total/perPage));
+
+    Board.find({}, function(에러, 결과){
+      응답.render('index', {board:결과, totalPage:totalPage})
+    }).sort({board_date:-1}).skip(perPage * (page-1)).limit(perPage);
   })
+})
+
+
+router.get('/search', (요청, 응답)=>{
+  let 검색조건 = [
+    {
+      $search: {
+        index: 'search',
+        text: {
+          query: 요청.query.title,
+          path: 'title'
+        }
+      }
+    }
+  ]
+
+  const page = Number(요청.query.page || 1);
+  const perPage = Number(5);
+  let total;
+  let totalPage;
+
+  Board.aggregate(검색조건, function(에러, 결과){
+    total = 결과.length 
+    totalPage = Number(Math.ceil(total/perPage));
+    console.log(totalPage)
+    응답.render('index', {board:결과,totalPage:totalPage})
+  }).sort({board_date:-1}).skip(perPage * (page-1)).limit(perPage);
 })
 
 /* Write board page */
@@ -144,10 +180,14 @@ router.get('/board/write',로그인여부, function(요청, 응답) {
 
 /* board insert mongo */
 router.post('/board/write',로그인여부, function(요청, 응답) {
+  const date = new Date();
+  const dateformat = date.toLocaleString();
+
   let board = new Board();
   board.title = 요청.body.title;
   board.contents = 요청.body.contents;
   board.author = 요청.user.userName;
+  board.board_date = dateformat;
 
   board.save(function (에러) {
     if(에러){
@@ -196,7 +236,7 @@ router.get('/detail/:id',로그인여부, function (요청, 응답) {
   Board.findOne({_id: 요청.params.id}, function (err, board) {
       if(err){console.log(err)}
       응답.render('detail', { board: board });
-  })
+  });
 });
 
 /* comment insert mongo*/

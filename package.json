@@ -17,9 +17,12 @@
     "express-session": "^1.17.3",
     "method-override": "^3.0.0",
     "mongoose": "^6.4.2",
-    "nodemon": "^2.0.18",
+    "mongoose-aggregate-paginate-v2": "^1.0.6",
+    "nodemon": "^2.0.19",
     "passport": "^0.6.0",
     "passport-local-mongoose": "^7.1.2",
-    "session": "^0.1.0"
+    "session": "^0.1.0",
+    "to": "^0.2.9",
+    "update": "^0.7.4"
   }
 }

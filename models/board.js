@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
-const date = new Date();
-const dateformat = date.toLocaleString();
 
 const commentSchema = new Schema({
     contents: {
@@ -29,8 +27,9 @@ const boardSchema = new Schema({
         type : String,
         required : true
     },
-    board_date: {type: String, default: dateformat},
+    board_date: {type: String, required: true},
     comments: [commentSchema]
 });
  
+
 module.exports = mongoose.model('board', boardSchema);
